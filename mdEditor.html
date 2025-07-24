@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markdown Editor</title>
+
+  <!-- External fonts and libraries -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+  <!-- Prettier for real Markdown formatting -->
+  <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
+  <script src="https://unpkg.com/prettier@2.8.8/parser-markdown.js"></script>
+
+  <style>
+    /* Theme colors */
+    :root {
+      --bg: #1e1e1e;
+      --panel: #23272e;
+      --text: #d4d4d4;
+      --accent: #b9aadc;
+      --highlight: #4fc1ff;
+      --code-bg: #2d2d2d;
+    }
+
+    /* Global box-reset */
+    * { box-sizing: border-box; }
+
+    /* Base layout */
+    html, body {
+      min-height: 100vh;
+      margin: 0; padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      display: flex; flex-direction: column;
+    }
+
+    /* Centered container */
+    .container {
+      width: clamp(60vw, 90vw, 1500px);
+      margin: 1rem auto;
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Header styling */
+    .header-container h1 {
+      margin: 0; font-weight: 600; font-size: 4rem;
+      text-align: center; color: var(--accent);
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.45rem 1rem; font-weight: 500;
+      font-size: 0.95rem; border-radius: 6px;
+      border: 1px solid #444; background: var(--code-bg);
+      color: var(--text); cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .btn:hover { background: var(--highlight); color: white; }
+
+    /* Editor + Preview */
+    .editor-wrapper {
+      min-height: 60vh; display: flex; gap: 1rem;
+      overflow: hidden;
+    }
+    @media (min-width: 768px) { .editor-wrapper { flex-direction: row; } }
+
+    .editor-pane, .preview-pane { flex: 1; overflow: auto; }
+
+    /* Text area & preview styling */
+    #editor, #preview {
+      flex: 1; padding: 1rem; font-size: 1rem;
+      border: 1px solid #444; border-radius: 6px;
+      background: var(--bg); color: var(--text);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Preview headings & code */
+    #preview h1, #preview h2, #preview h3,
+    #preview h4, #preview h5, #preview h6 { color: var(--accent); }
+    #preview pre, #preview code {
+      background: var(--code-bg); color: #dcdcaa;
+      padding: 0.3rem 0.6rem; border-radius: 4px;
+    }
+
+    /* Cheatsheet */
+    .cheatsheet-container {
+      background: #23272e; padding: 1.5rem;
+      border-radius: 16px; margin: 2rem auto;
+      font-size: 1rem; border: 1px solid #333;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    }
+    .cheatsheet-container summary {
+      font-weight: 600; font-size: 1.2rem;
+      cursor: pointer; color: #b9aadc;
+      margin-bottom: 0.75rem;
+    }
+    .cheatsheet-content pre {
+      background: #1e1e1e; color: #d4d4d4;
+      padding: 1rem; border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      white-space: pre-wrap; overflow-x: auto;
+      line-height: 1.6; border: 1px solid #333;
+    }
+
+    /* Allow vertical resize */
+    #editor { resize: vertical; }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div class="container header-container">
+    <h1>.md</h1>
+    <div class="action-buttons">
+      <button id="reset-md" class="btn">♻️ Reset</button>
+      <button id="save-md" class="btn">⬇️ Export</button>
+      <button id="format-md" class="btn">✨ Format</button>
+      <button id="font-size-toggle" class="btn">🖊 Font M</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="container editor-wrapper">
+    <textarea id="editor" placeholder="Write markdown here..."></textarea>
+    <div id="preview"></div>
+  </div>
+
+  <!-- CHEATSHEET -->
+  <div class="container cheatsheet-container">
+    <details>
+      <summary>Markdown Cheatsheet</summary>
+      <div class="cheatsheet-content">
+<pre><code># Basic Syntax (Paste into editor to see it in use)
+
+## Headings
+Use `#` for headings. Example:
+
+# H1
+## H2
+### H3
+
+## Bold and Italics
+Use **bold** or __bold__; *italic* or _italic_. Example:
+
+**bold** _italic_
+
+## Lists
+Unordered:
+- Item 1
+- Item 2
+- Item 3
+
+Ordered:
+1. First
+2. Second
+3. Third
+
+## Links and Images
+[Link text](https://example.com)
+![Alt text](image.jpg)
+
+## Code
+Inline: `code`
+Block:
+```javascript
+console.log('hello');
+```
+
+## Blockquotes
+> This is a blockquote.
+
+## Horizontal Rule
+---
+***
+
+## Tables
+| Name    | Age | City          |
+|---------|:---:|---------------|
+| Alice   |  30 | New York      |
+| **Bob** |  25 | San Francisco |
+
+## Definition Lists
+Term 1
+: Definition for term 1
+
+Term 2
+: Definition for term 2, which can
+  span multiple lines.
+
+## Footnotes
+Here's a footnote reference[^1].
+
+[^1]: Here’s the footnote text.
+
+## Task Lists
+- [ ] Task not done
+- [x] Task done
+
+## Strikethrough
+This ~~was~~ is correct.
+</code></pre>
+      </div>
+    </details>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // Initialize parser
+    const md = markdownit({ html: true, linkify: true, typographer: true });
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const saveBtn = document.getElementById('save-md');
+    const resetBtn = document.getElementById('reset-md');
+    const formatBtn = document.getElementById('format-md');
+    const fontSizeBtn = document.getElementById('font-size-toggle');
+
+    // Font sizes
+    const sizes = ['0.875rem','1rem','1.25rem','1.5rem'];
+    const labels = ['S','M','L','XL']; let idx=1;
+
+    // Debounce for storage
+    let saveTimer;
+
+    function update() {
+      preview.innerHTML = md.render(editor.value);
+    }
+
+    // Input handler with debounced save
+    editor.addEventListener('input', () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try { localStorage.setItem('markdownContent', editor.value); } catch {}
+      }, 300);
+      update();
+
+      // Sync scroll position
+      const ratio = editor.scrollTop/(editor.scrollHeight-editor.clientHeight);
+      preview.scrollTop = ratio*(preview.scrollHeight-preview.clientHeight);
+    });
+
+    // Scroll sync
+    editor.addEventListener('scroll', () => {
+      const ratio = editor.scrollTop/(editor.scrollHeight-editor.clientHeight);
+      preview.scrollTop = ratio*(preview.scrollHeight-preview.clientHeight);
+    });
+
+    // Reset
+    resetBtn.addEventListener('click', () => { localStorage.clear(); location.reload(); });
+    // Save file
+    saveBtn.addEventListener('click', () => {
+      const blob = new Blob([editor.value],{type:'text/markdown'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='doc.md'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    // Format
+    formatBtn.addEventListener('click', () => {
+      try { editor.value = prettier.format(editor.value,{parser:'markdown',plugins:prettierPlugins}); } catch(e){console.error(e);} update();
+    });
+
+    // Font toggle
+    fontSizeBtn.addEventListener('click', () => {
+      idx=(idx+1)%sizes.length;
+      editor.style.fontSize=sizes[idx];
+      preview.style.fontSize=sizes[idx];
+      fontSizeBtn.textContent=`🖊 Font ${labels[idx]}`;
+    });
+
+    // Init
+    editor.value = localStorage.getItem('markdownContent')||'## Write markdown here...';
+    editor.style.fontSize = preview.style.fontSize = sizes[idx];
+    update();
+
+  </script>
+</body>
+</html>
