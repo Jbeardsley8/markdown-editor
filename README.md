@@ -19,9 +19,9 @@ A lightweight web app that lets you write and preview Markdown in real time, wit
    cd markdown-live-editor
    ```
 
-2. **Open `index.html`**
+2. **Open `mdEditor.html`**
 
-   * Simply open the `index.html` file in your browser.
+   * Simply open the `mdEditor.html` file in your browser.
    * No build step or server required.
 
 3. **Use the editor**
