@@ -37,7 +37,3 @@ A lightweight web app that lets you write and preview Markdown in real time, wit
 * **Styling:** All CSS lives in the `<style>` block at the top of `index.html`. Adjust variables under `:root` for easy theme tweaks.
 * **Markdown Parser:** Uses [markdown-it](https://github.com/markdown-it/markdown-it). You can enable plugins by editing the initialization in the `<script>` section.
 * **Formatter:** Powered by [Prettier](https://prettier.io/). To adjust formatting rules, modify the options passed in the `formatBtn` click handler.
-
-## License
-
-This project is licensed under the MIT License. Feel free to use, modify, and share!
