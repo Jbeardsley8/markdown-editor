@@ -1,6 +1,6 @@
 # Markdown Live Editor
 
-A lightweight web app that lets you write and preview Markdown in real time, with built‑in formatting tools and a handy cheatsheet.
+A lightweight web app that lets you write and preview Markdown in real time, with built‑in formatting tools and a cheatsheet.
 
 ## Features
 
@@ -22,15 +22,14 @@ A lightweight web app that lets you write and preview Markdown in real time, wit
 2. **Open `mdEditor.html`**
 
    * Simply open the `mdEditor.html` file in your browser.
-   * No build step or server required.
 
 3. **Use the editor**
 
    * Type Markdown in the left pane. Your formatted document appears instantly on the right.
-   * Click **✨ Format** to run Prettier on your Markdown.
-   * Click **⬇️ Export** to download your content as `document.md`.
-   * Click **🖊 Font M** to toggle font sizes.
-   * Click **♻️ Reset** to clear the editor and local storage.
+   * Click **Format** to run Prettier on your Markdown.
+   * Click **Export** to download your content as `document.md`.
+   * Click **Font M** to toggle font sizes.
+   * Click **Reset** to clear the editor and local storage.
 
 ## Customization
 
